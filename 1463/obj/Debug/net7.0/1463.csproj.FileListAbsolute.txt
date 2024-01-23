@@ -1,0 +1,14 @@
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\bin\Debug\net7.0\1463.exe
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\bin\Debug\net7.0\1463.deps.json
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\bin\Debug\net7.0\1463.runtimeconfig.json
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\bin\Debug\net7.0\1463.dll
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\bin\Debug\net7.0\1463.pdb
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\1463.GeneratedMSBuildEditorConfig.editorconfig
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\1463.AssemblyInfoInputs.cache
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\1463.AssemblyInfo.cs
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\1463.csproj.CoreCompileInputs.cache
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\1463.dll
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\refint\1463.dll
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\1463.pdb
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\1463.genruntimeconfig.cache
+D:\VisualStudio\source\repos\algorithm-backjoon\1463\obj\Debug\net7.0\ref\1463.dll
