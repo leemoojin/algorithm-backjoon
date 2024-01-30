@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic; //Queue<>
 using System.Linq; //.Select() 
+using System.Text;
 
 namespace _14940
 {
@@ -16,7 +17,6 @@ namespace _14940
         private static int sizeN, sizeM;
         //탐색 목표 좌표
         private static int startX, startY;
-
 
         //좌표
         class Point
@@ -91,6 +91,9 @@ namespace _14940
             //최단거리 찾기
             BFS();
 
+            //StringBuilder 사용으로 시간초과를 해결할수 있었다
+            StringBuilder sb = new StringBuilder();
+
             //결과 맵 출력하기
             for (int i = 0; i < sizeN; i++)
             {
@@ -99,17 +102,20 @@ namespace _14940
 
                     if (j == sizeM - 1)
                     {
-                        if (i == sizeN - 1 && j == sizeM - 1)
+                        if (i == sizeN - 1)
                         {
-                            Console.Write($"{resultMap[i, j]}");
+                            sb.Append(resultMap[i, j]);                            
                             break;
                         }
 
-                        Console.WriteLine($"{resultMap[i, j]}");
+                        sb.Append(resultMap[i, j]).Append("\n");                        
                     }
-                    else Console.Write($"{resultMap[i, j]} ");
+                    else sb.Append(resultMap[i, j]).Append(" ");
+
                 }
             }
+
+            Console.Write(sb.ToString());
         }
 
         //너비 탐색
@@ -117,7 +123,7 @@ namespace _14940
         {
             //탐색여부
             visit = new bool[sizeN, sizeM];
-
+            
             int nowY, nowX;
             int nextY, nextX;
             Point nowPoint;
@@ -143,24 +149,23 @@ namespace _14940
                 {
                     nextY = nowY + deltaY[i];
                     nextX = nowX + deltaX[i];
-
+                 
                     //탐색지역이 맵의 유효범위가 아니라면 스킵
-                    if (nextY < 0 || nextY >= sizeN || nextX < 0 || nextX >= sizeM)
+                    if (nextY < 0 || nextY >= sizeN || nextX < 0 || nextX >= sizeM)                               
                         continue;
                     //탐색이 불가능한 지역이면 스킵
-                    if (resultMap[nextY, nextX] == 0)
+                    if (resultMap[nextY, nextX] == 0)               
                         continue;
                     //이미 탐색한 지역이면 스킵
-                    if (visit[nextY, nextX] = true)
+                    if (visit[nextY, nextX] == true)        
                         continue;
 
                     //방문여부
                     visit[nextY, nextX] = true;
                     //거리 추가
-                    resultMap[nextY, nextY] = resultMap[nowY, nowX] + 1;
+                    resultMap[nextY, nextX] = resultMap[nowY, nowX] + 1;
                     //다음 탐색지역
-                    queue.Enqueue(new Point(nextY, nextX));
-
+                    queue.Enqueue(new Point(nextY, nextX));                    
                 }
             }
         }
