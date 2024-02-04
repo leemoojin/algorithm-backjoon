@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text;
+
 
 namespace _1927
 {
@@ -36,7 +36,7 @@ namespace _1927
         //최소 힙 - 힙트리 구조 사용
         class MiniBinaryHeap
         {
-            int[] heap = new int[0];
+            private int[] heap = new int[0];
 
             public int Count()
             {
@@ -69,15 +69,17 @@ namespace _1927
                 {
                     //비교할 부모노드
                     int next = (now - 1) / 2;
-                    //부모노드가 더 작을 경우 더이상의 작업이 필요없다 
-                    if (_heap[next] < _heap[now]) break;
+                    
+                    if (_heap[next] > _heap[now])
+                    {
+                        //부모노드가 더 크다면 위치를 바꿔 준다
+                        tempt = _heap[next];
+                        _heap[next] = _heap[now];
+                        _heap[now] = tempt;
 
-                    //부모노드가 더 크다면 위치를 바꿔 준다
-                    tempt = _heap[next];
-                    _heap[next] = _heap[now];
-                    _heap[now] = tempt;
-
-                    now = next;//인덱스 값도 변경 변경된 위치에서 다시 비교해야하기 때문
+                        now = next;//인덱스 값도 변경 변경된 위치에서 다시 비교해야하기 때문
+                    }
+                    else break;      //부모노드가 더 작을 경우 더이상의 작업이 필요없다               
                 }
 
                 heap = _heap;
@@ -99,10 +101,15 @@ namespace _1927
             //배열에서 가장 작은값을 리턴하고 삭제
             public int Pop() 
             {
-               // Console.WriteLine($"팝실행");
+                //Console.WriteLine($"팝실행");
 
                 //힙 배열에 아무 값도 없을 때 0 리턴
-                if (heap.Length == 0) return 0;
+                if (heap.Length == 0)
+                {
+                    //heap = new int[0];
+
+                    return 0;
+                }
 
                 //리턴할 가장 작은 값을 담는다 (배열의 0번 인덱스)
                 int returnNum = heap[0];
@@ -132,7 +139,8 @@ namespace _1927
 
                 //맨위의 0번인덱스, 부모 노드에서 시작해서 왼쪽,오른쪽 자식노드와 비교하면서 내려간다
                 int now = 0;
-                int left, right, next, tempt;
+                int last = _heap.Length - 1;
+                int child, tempt;
                 //Console.WriteLine($"작업 중");
 
                 /*
@@ -145,38 +153,46 @@ namespace _1927
                 */
 
 
-                while (true)
-                {                  
+                while (now < last)
+                {
                     //Console.WriteLine($"와일문");
-
+                    /*
                     left = now * 2 + 1;
                     right = now * 2 + 2;
+                    */
 
-                    next = now;                              
+                    //왼쪽 차일드 인덱스, 여기에 +1 할경우 오른쪽 차일드가 된다
+                    child = now * 2 + 1;
+
+                    //Console.WriteLine($"now : {_heap[now]}, child : {_heap[child]}");
+
+
+
+
+                    //왼쪽차일드와 오른쪽 차일드를 비교해준다
+                    //왼쪽 차일드가 더 클경우
+                    if (child < last && _heap[child] > _heap[child + 1])
+                    {   
+                        //오른쪽 차일드노드를 부모노드로 이동시키기위해 사용할 차일드는 오른쪽 차일드가된다
+                        child = child + 1;
+                    }
+
 
                     //if 문 조건에 범위를 넣어줘야 인덱스를 벗어나는 에러가 발생하지 않는다
-                    //왼쪽값이 현재 값보다 작을경우 왼쪽 자식 노드로 이동
-                    if (left < _heap.Length && _heap[left] < _heap[now]) next = left;
-                    //오른쪽값이 현재 값보다 작을경우 왼쪽 자식 노드로 이동
-                    if (right < _heap.Length && _heap[right] < _heap[now]) next = right;
-
-                    //부모 노드가 왼쪽,오른쪽 값보다 작으면 바로 종료
-                    //부모노드가 제일 작을 경우 next에 다른 값이 할당되지 않아 그대로 now와 같은 상태
-                    if (next == now)
-                    {
-                        //Console.WriteLine($"바로종료");
-                        break;
-
-                    }
+                    //부모노드가 자식노드보다 작거나 같을때 멈춘다
+                    //수가 2개일때는 child와 last인덱스가 같아진다
+                    if (child < last || _heap[now] <= _heap[child]) break;
+                    
+                    
 
                     tempt = _heap[now];
                     //더 작은 왼쪽 또는 오른쪽 자식 노드가 부모 노드로 올라온다
-                    _heap[now] = _heap[next];
+                    _heap[now] = _heap[child];
                     //부모노드가 아래로 내려간다
-                    _heap[next] = tempt;
+                    _heap[child] = tempt;
 
                     //내려간 인덱스에서 다시 비교를 반복한다
-                    now = next;                    
+                    now = child;                    
                 }
 
 
