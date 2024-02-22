@@ -5,6 +5,10 @@ namespace _13460
 {
     internal class Program
     {
+
+        static int N, M;
+        static char[,] board;
+
         static void Main(string[] args)
         {
             /*
@@ -15,33 +19,39 @@ namespace _13460
              '.', '#', 'O', 'R', 'B'
             */
 
-            //세로 크기, 가로 크기 입력
-            var inputNM = Console.ReadLine()!.Split().Select(int.Parse).ToArray();
-            //세로 크기
-            int sizeN = inputNM[0];
-            //가로 크기
-            int sizeM = inputNM[1];
+            //빨강, 파랑, 구멍 위치
+            (int, int) red = (0, 0), blue = (0, 0), end = (0, 0);
 
-            Console.WriteLine($"n : {sizeN}, m : {sizeM}");
+            //세로 크기, 가로 크기 입력
+            int[] inputs = Array.ConvertAll(Console.ReadLine().Split(), int.Parse);            
+            N = inputs[0];//세로 크기
+            M = inputs[1];//가로 크기
+
+            Console.WriteLine($"n : {n}, m : {m}");
 
             //입력 받은 세로,가로 크기의 보드
-            string[,] board = new string[sizeN, sizeM];
+            board = new char[N, M];
 
             //N개의 줄에 보드의 모양을 나타내는 길이 M의 문자열이 주어진다
-            for (int i=0; i<sizeN; i++)
+            for (int i=0; i<N; i++)
             {
-                var input = Console.ReadLine()!.Split().ToArray();
+                String input = Console.ReadLine();
                 
-                for (int j = 0; j < sizeM; j++)
-                {
+                for (int j=0; j<M; j++)
+                {   
+                    //입력한 문자를 보드에 입력
                     board[i, j] = input[j];
+
+                    if (board[i, j] == 'R') red = (i, j);
+                    else if (board[i, j] == 'B') blue = (i, j);
+                    else if (board[i, j] == 'O') end = (i, j);
                 }
             }
 
 
-            for (int i=0; i<sizeN; i++)
+            for (int i=0; i<N; i++)
             {
-                for (int j = 0; j < sizeM; j++)
+                for (int j=0; j<M; j++)
                 {
                     Console.Write(board[i, j]);
                 }
