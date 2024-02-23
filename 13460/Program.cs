@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace _13460
@@ -59,5 +60,37 @@ namespace _13460
             }
 
         }
+
+        //너비우선 탐색
+        static int BFS((int, int) red, (int, int) blue)
+        {
+            int[] dx = new int[] { 1, 0, -1, 0 };//x축 탐색용
+            int[] dy = new int[] { 0, 1, 0, -1 };//y축 탐색용
+            //빨간공좌표 x,y 파란공 좌표 x,y . 탐색횟수                                                 
+            Queue<(int, int, int, int, int)> q = new Queue<(int, int, int, int, int)>();
+
+            q.Enqueue((red.Item1, red.Item2, blue.Item1, blue.Item2, 0));
+
+            while (q.Count > 0)
+            {
+                var cur = q.Dequeue();//제거하고 담는다
+                int curRedX = cur.Item1;
+                int curRedY = cur.Item2;
+                int curBlueX = cur.Item3;
+                int curBlueY = cur.Item4;
+                int curMoveCount = cur.Item5;
+
+                //10번 움직인 경우 탐색을 종료
+                if (curMoveCount == 10) 
+                    break;
+
+
+
+
+            }
+
+            return 0;
+        }
+
     }
 }
