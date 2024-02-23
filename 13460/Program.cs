@@ -70,10 +70,10 @@ namespace _13460
         {
             int[] dx = new int[] { 1, -1, 0, 0 };//x축 탐색용
             int[] dy = new int[] { 0, 0, 1, -1 };//y축 탐색용
-            //빨간공좌표 x,y 파란공 좌표 x,y . 탐색횟수, 직전 탐색 인덱스                                                 
-            Queue<(int, int, int, int, int, int)> q = new Queue<(int, int, int, int, int, int)>();
+            //빨간공좌표 x,y 파란공 좌표 x,y . 탐색횟수                                                 
+            Queue<(int, int, int, int, int)> q = new Queue<(int, int, int, int, int)>();
 
-            q.Enqueue((red.Item1, red.Item2, blue.Item1, blue.Item2, 0, 0));
+            q.Enqueue((red.Item1, red.Item2, blue.Item1, blue.Item2, 0));
 
             //Console.WriteLine($"redy : {red.Item1}, redx : {red.Item2}, bluey : {blue.Item1}, bluex : {blue.Item2}");
 
@@ -83,13 +83,12 @@ namespace _13460
                 //Console.WriteLine($"와일문 시작");
 
                 var cur = q.Dequeue();//제거하고 담는다
-                //현제 구슬 좌표
+                //현재 구슬 좌표
                 int curRedY = cur.Item1;
                 int curRedX = cur.Item2;
                 int curBlueY = cur.Item3;
                 int curBlueX = cur.Item4;
                 int curMoveCount = cur.Item5;
-                //int preIndex = cur.Item6;
 
                 //Console.WriteLine($"redy : {curRedY}, redx : {curRedX}, bluey : {curBlueY}, bluex : {curBlueX}, count : {curMoveCount}");
 
@@ -198,7 +197,7 @@ namespace _13460
 
                     //Console.WriteLine($"큐 추가");
 
-                    q.Enqueue((nextRedY, nextRedX, nextBlueY, nextBlueX, curMoveCount + 1, i));
+                    q.Enqueue((nextRedY, nextRedX, nextBlueY, nextBlueX, curMoveCount + 1));
                 }
             }
 
