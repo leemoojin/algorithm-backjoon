@@ -45,22 +45,10 @@ namespace _13460
                     board[i, j] = input[j];
 
                     if (board[i, j] == 'R') red = (i, j);
-                    else if (board[i, j] == 'B') blue = (i, j);
-                    else if (board[i, j] == 'O') end = (i, j);
+                    else if (board[i, j] == 'B') blue = (i, j);                    
                 }
             }
-
-            /*
-            for (int i=0; i<N; i++)
-            {
-                for (int j=0; j<M; j++)
-                {
-                    Console.Write(board[i, j]);
-                }
-                Console.WriteLine();
-            }
-            */
-
+            
             Console.WriteLine(BFS(red, blue));
 
         }
@@ -111,7 +99,7 @@ namespace _13460
                     while (board[nextBlueY + dy[i], nextBlueX + dx[i]] != '#')
                     {
                         //Console.WriteLine($"파란구슬 이동가능, {i}");
-               
+
                         //파란 구슬이 구멍에 도달한 경우
                         if (board[nextBlueY + dy[i], nextBlueX + dx[i]] == 'O')
                         {
@@ -120,11 +108,13 @@ namespace _13460
                             //continue;//while문이 종료되지 않음
                             break;
                         }
+                        else 
+                        {
+                            nextBlueX += dx[i];
+                            nextBlueY += dy[i];
 
-                        nextBlueX += dx[i];
-                        nextBlueY += dy[i];
-                       
-                        //Console.WriteLine($"redy : {nextRedY}, redx : {nextRedX}, bluey : {nextBlueY}, bluex : {nextBlueX}, count : {curMoveCount}");                        
+                            //Console.WriteLine($"redy : {nextRedY}, redx : {nextRedX}, bluey : {nextBlueY}, bluex : {nextBlueX}, count : {curMoveCount}");  
+                        }
                     }
 
                     if (blueOut)
@@ -192,11 +182,11 @@ namespace _13460
 
                     //빨간 공이 이동하지 않은 경우 스킵
                     //Console.WriteLine($"이동후 redy : {nextRedY}, redx : {nextRedX}, 시작 redy : {red.Item1}, redx : {red.Item2}, count : {curMoveCount}, index : {i}");
-                    if (nextRedX == curRedX && nextRedY == curRedY) continue;
+                    if (nextRedX == curRedX && nextRedY == curRedY) 
+                        continue;
 
 
                     //Console.WriteLine($"큐 추가");
-
                     q.Enqueue((nextRedY, nextRedX, nextBlueY, nextBlueX, curMoveCount + 1));
                 }
             }
