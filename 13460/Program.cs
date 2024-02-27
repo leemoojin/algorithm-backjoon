@@ -1,199 +1,202 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace _13460
 {
     internal class Program
     {
-
+        
         static int N, M;
         static char[,] board;
-
+        static (int y, int x) red, blue;
+        
         static void Main(string[] args)
-        {
-            /*
-            보드의 세로 크기는 N, 가로 크기는 M
-            첫 번째 줄에는 보드의 세로, 가로 크기를 의미하는 두 정수 N, M (3 ≤ N, M ≤ 10)이 주어진다
-             
-            왼쪽으로, 오른쪽으로, 위쪽으로, 아래쪽으로 기울이기와 같은 네 가지 동작이 가능
-             '.', '#', 'O', 'R', 'B'
-            */
+        {        
+            var inputs = Array.ConvertAll(Console.ReadLine().Split(), int.Parse);
+            N = inputs[0];//row, y
+            M = inputs[1];//column, x
 
-            //빨강, 파랑, 구멍 위치
-            (int, int) red = (0, 0), blue = (0, 0), end = (0, 0);
-
-            //세로 크기, 가로 크기 입력
-            int[] inputs = Array.ConvertAll(Console.ReadLine().Split(), int.Parse);            
-            N = inputs[0];//세로 크기
-            M = inputs[1];//가로 크기
-
-            //Console.WriteLine($"n : {N}, m : {M}");
-
-            //입력 받은 세로,가로 크기의 보드
             board = new char[N, M];
 
-            //N개의 줄에 보드의 모양을 나타내는 길이 M의 문자열이 주어진다
-            //N = y축 , M = x축
-            for (int i=0; i<N; i++)
+            for (int i = 0; i < N; i++)
             {
                 String input = Console.ReadLine();
-                
-                for (int j=0; j<M; j++)
-                {   
-                    //입력한 문자를 보드에 입력
+
+                for (int j = 0; j < M; j++) 
+                {
                     board[i, j] = input[j];
 
-                    if (board[i, j] == 'R') red = (i, j);
-                    else if (board[i, j] == 'B') blue = (i, j);                    
+                    if (board[i, j] == 'R') red = (i,j);
+                    if (board[i, j] == 'B') blue = (i, j);
                 }
             }
-            
-            Console.WriteLine(BFS(red, blue));
 
+            Console.WriteLine(Bfs());                          
         }
+           
+        //Breadth-first search
+        public static int Bfs()
+        {   
+            //search down, up, right, left
+            int[] dY = new int[] { 1, -1, 0, 0 };
+            int[] dX = new int[] { 0, 0, 1, -1 };
+            //red, blue visited
+            var visited = new HashSet<((int y, int x), (int y, int x))>();
+            visited.Add((red, blue));
 
-        //너비우선 탐색
-        static int BFS((int, int) red, (int, int) blue)
-        {
-            int[] dx = new int[] { 1, -1, 0, 0 };//x축 탐색용
-            int[] dy = new int[] { 0, 0, 1, -1 };//y축 탐색용
-            //빨간공좌표 x,y 파란공 좌표 x,y . 탐색횟수                                                 
-            Queue<(int, int, int, int, int)> q = new Queue<(int, int, int, int, int)>();
+            //Console.WriteLine($"처음 위치 : {red}, {blue}");
+            /*
+            red y,x, blue y,x , moveCount
+            Queue<(int,int,int,int,int)> q = new Queue<(int,int,int,int,int)>();
+            */
+            Queue<Ball> q = new Queue<Ball>();
+           
+            //add queue
+            //q.Enqueue((red.y, red.x, blue.y, blue.x, 0));
+            q.Enqueue(new Ball(red.y, red.x, blue.y, blue.x, 0));
 
-            q.Enqueue((red.Item1, red.Item2, blue.Item1, blue.Item2, 0));
+            while (q.Count>0) 
+            {   
+                //current data
+                var cur = q.Dequeue();
 
-            //Console.WriteLine($"redy : {red.Item1}, redx : {red.Item2}, bluey : {blue.Item1}, bluex : {blue.Item2}");
+                /*
+                int curRY = cur.Item1;
+                int curRX = cur.Item2;
+                int curBY = cur.Item3;
+                int curBX = cur.Item4;
+                int curMoves = cur.Item5;
+                */
+
+                int curRY = cur.rY;
+                int curRX = cur.rX;
+                int curBY = cur.bY;
+                int curBX = cur.bX;
+                int curMoves = cur.moves;
+
+                //Console.WriteLine($"와일문 : {(curRY,curRX)}, {(curBY,curBX)}, {curMoves}");
 
 
-            while (q.Count > 0)
-            {
-                //Console.WriteLine($"와일문 시작");
+                //more than 10 moves, fail return -1
+                //지금 이동 횟수가 10이더라도 탐색을 한번더하면 이동횟수를 10회를 초과한다
+                if (curMoves >= 10) break;
 
-                var cur = q.Dequeue();//제거하고 담는다
-                //현재 구슬 좌표
-                int curRedY = cur.Item1;
-                int curRedX = cur.Item2;
-                int curBlueY = cur.Item3;
-                int curBlueX = cur.Item4;
-                int curMoveCount = cur.Item5;
-
-                //Console.WriteLine($"redy : {curRedY}, redx : {curRedX}, bluey : {curBlueY}, bluex : {curBlueX}, count : {curMoveCount}");
-
-                //10번 움직인 경우 탐색을 종료
-                if (curMoveCount == 10) 
-                    break;
-
-                //순서대로 좌,우,위,아래로 탐색
-                for (int i=0; i<4; i++)
+                //search up, down, right, left
+                for (int i = 0; i < 4; i++)
                 {
-                    bool blueOut = false;//파란공 탈출여부 
+                    //Console.WriteLine($"포문 : {(curRY, curRX)}, {(curBY, curBX)}, {curMoves}, i = {i}");
 
-                    int nextRedX = curRedX;
-                    int nextRedY = curRedY;
-                    int nextBlueX = curBlueX;
-                    int nextBlueY = curBlueY;
+                    bool redOut = false;
+                    bool blueOut = false;
+                    int nextRY = curRY;
+                    int nextRX = curRX;
+                    int nextBY = curBY;
+                    int nextBX = curBX;
+                    int nextMoves = curMoves;
 
-                    //이동 가능한 경우 이동 (벽, 구멍 아닌경우)
-                    //파란색 구슬 이동
-                    while (board[nextBlueY + dy[i], nextBlueX + dx[i]] != '#')
+                    //move blue
+                    while (board[nextBY + dY[i], nextBX + dX[i]] != '#')
                     {
-                        //Console.WriteLine($"파란구슬 이동가능, {i}");
+                        nextBY += dY[i];
+                        nextBX += dX[i];
 
-                        //파란 구슬이 구멍에 도달한 경우
-                        if (board[nextBlueY + dy[i], nextBlueX + dx[i]] == 'O')
+                        //blue out is fail
+                        if (board[nextBY, nextBX] == 'O')
                         {
-                            //Console.WriteLine($"파란구슬 탈출");
                             blueOut = true;
-                            //continue;//while문이 종료되지 않음
                             break;
                         }
-                        else 
-                        {
-                            nextBlueX += dx[i];
-                            nextBlueY += dy[i];
+                    }                    
 
-                            //Console.WriteLine($"redy : {nextRedY}, redx : {nextRedX}, bluey : {nextBlueY}, bluex : {nextBlueX}, count : {curMoveCount}");  
+                    //move red                    
+                    while (board[nextRY + dY[i], nextRX + dX[i]] != '#')
+                    {
+                        nextRY += dY[i];
+                        nextRX += dX[i];
+
+                        //red out is success
+                        if (board[nextRY, nextRX] == 'O')
+                        {
+                            redOut = true;
+                            break;
                         }
                     }
 
-                    if (blueOut)
-                    {
-                        //Console.WriteLine($"스킵, {i}");
-                        continue;
-                    }    
-                    //Console.WriteLine($"스킵안함, {i}");
+                    /*
+                    //if red not move, skip
+                    //빨간공이 움직이지 않는 상황은 의미가 없다고 생각해서 스킵하려고했는데 오답처리되었다, why?
+                    //예제는 모두 통과됨
+                    //-> 처음부터 작업을 줄이려 하지말고 일단 구현 후 줄여나갈 것
+                    if (nextRY == curRY && nextRX == curRX) continue;
+                    */
 
-                    //빨간색 구슬 이동
-                    while (board[nextRedY + dy[i], nextRedX + dx[i]] != '#')
-                    {
-                        //Console.WriteLine($"빨간구슬 이동가능 , {i}");
-                 
-                        nextRedX += dx[i];
-                        nextRedY += dy[i];
-                        
-                        //Console.WriteLine($"redy : {nextRedY}, redx : {nextRedX}, bluey : {nextBlueY}, bluex : {nextBlueX}, count : {curMoveCount}");
+                    //blue out is fail                 
+                    if (blueOut) continue;
+                    //red out is success
+                    if (redOut) return nextMoves += 1;
 
-                        //빨간 구슬이 구멍에 도달한 경우
-                        if (board[nextRedY, nextRedX] == 'O')
+                    //blue, red meet
+                    if (nextRY == nextBY && nextBX == nextRX)
+                    {
+                        //down
+                        if (i == 0)
                         {
-                            //Console.WriteLine($"빨간구슬 탈출");
-                            return curMoveCount + 1;
+                            if (curRY > curBY) nextBY -= dY[i];//blue back
+                            else nextRY -= dY[i];//red back
                         }
-                    }
-                                                           
-                    //빨간 구슬과 파란 구슬 둘다 이동 후 위치가 겹친 경우
-                    if (nextRedX == nextBlueX && nextRedY == nextBlueY)
-                    {
-                        //Console.WriteLine($"구슬 겹쳤을때");
-
-                        //빨간 구슬의 총 이동거리
-                        int redDist = Math.Abs(nextRedX-curRedX) + Math.Abs(nextRedY-curRedY);
-                        //파란 구슬의 총 이동거리
-                        int blueDist = Math.Abs(nextBlueX - curBlueX) + Math.Abs(nextBlueY - curBlueY);
-
-                        /*
-                        총 이동거리가 더 멀 수록 늦게 도착하게되고
-                        //먼저 도착한 구슬이 현재 자리를 차지하고
-                        늦게 도착한 구슬은 바로 직전 위치로 이동한다
-                        */
-
-                        //파란구슬이 먼저 도착한 경우
-                        if (redDist > blueDist)
+                        //up
+                        else if (i == 1)
                         {
-                            //Console.WriteLine($"파란구슬이 먼저 도착, 빨간구슬 직전 위치로 이동");
-                       
-                            nextRedX -= dx[i];
-                            nextRedY -= dy[i];
-                         
-                            //Console.WriteLine($"redy : {nextRedY}, redx : {nextRedX}, bluey : {nextBlueY}, bluex : {nextBlueX}, count : {curMoveCount}");
-
+                            if (curRY > curBY) nextRY -= dY[i];//red back
+                            else nextBY -= dY[i];//blue back
                         }
-                        //빨간 구슬이 먼저 도착한 경우
+                        //right
+                        else if (i == 2)
+                        {
+                            if (curRX > curBX) nextBX -= dX[i];//blue back
+                            else nextRX -= dX[i];//red back
+                        }
+                        //left
                         else
                         {
-                            //Console.WriteLine($"빨간구슬이 먼저 도착, 파란구슬 직전 위치로 이동");
-                           
-                            nextBlueX -= dx[i];
-                            nextBlueY -= dy[i];
-                        
-                            //Console.WriteLine($"redy : {nextRedY}, redx : {nextRedX}, bluey : {nextBlueY}, bluex : {nextBlueX}, count : {curMoveCount}");
+                            if (curRX > curBX) nextRX -= dX[i];//red back
+                            else nextBX -= dX[i];//blue back
                         }
+                    }                    
+
+                    //if didn't visit, move ball
+                    if (!visited.Contains(((nextRY,nextRX), (nextBY, nextBX))))
+                    {
+                        //Console.WriteLine($"처음방문 : {(nextRY, nextRX)}, {(nextBY, nextBX)}");
+
+                        visited.Add(((nextRY, nextRX), (nextBY, nextBX)));//add visit location
+                        //인자 전달할때 nextMoves++ 로 전달하면 +1이 적용 안됨,
+                        //nextMoves+1로 전달해야 1이 더해진값이 전달됨
+                        q.Enqueue(new Ball(nextRY,nextRX,nextBY,nextBX, nextMoves+1));//add queue
                     }
-
-                    //빨간 공이 이동하지 않은 경우 스킵
-                    //Console.WriteLine($"이동후 redy : {nextRedY}, redx : {nextRedX}, 시작 redy : {red.Item1}, redx : {red.Item2}, count : {curMoveCount}, index : {i}");
-                    if (nextRedX == curRedX && nextRedY == curRedY) 
-                        continue;
-
-
-                    //Console.WriteLine($"큐 추가");
-                    q.Enqueue((nextRedY, nextRedX, nextBlueY, nextBlueX, curMoveCount + 1));
+                    //if already visited, skip                  
                 }
             }
-
-            //10회 이동전에 탈출하지 못한경우
             return -1;
         }
-    }
+
+        public class Ball
+        {   
+            //보안수준을 public으로 해야 엑세스 가능
+            public int rY;
+            public int rX;
+            public int bY;
+            public int bX;
+            public int moves;
+
+            public Ball(int rY, int rX, int bY, int bX, int moves)
+            {
+                this.rY = rY;
+                this.rX = rX;
+                this.bY = bY;
+                this.bX = bX;
+                this.moves = moves;
+            }
+        }
+    }    
 }
