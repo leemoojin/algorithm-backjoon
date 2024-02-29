@@ -60,5 +60,11 @@ namespace _2606
             }
             return count;
         }
+
+        //깊이 우선 탐색
+        public static void Dfs()
+        {
+        
+        }
     }
 }
