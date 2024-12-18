@@ -38,12 +38,13 @@ namespace _1202
 
             Jewel tempjewel;
 
+            // 보석 가격 내림차순으로 정렬
             for (int i = 0; i < N; i++)
             {
                 if ( i + 1 >= N ) break;
 
-                // 다음 보석의 무게가 더 크변 위치 변경
-                if (jewels[i].weight < jewels[i + 1].weight)
+                // 다음 보석 가격 더 크변 위치 변경
+                if (jewels[i].price < jewels[i + 1].price)
                 {
                     tempjewel = jewels[i];
                     jewels[i] = jewels[i + 1];
