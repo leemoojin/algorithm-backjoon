@@ -39,6 +39,8 @@ namespace _1202
             Jewel tempjewel;
 
             // 보석 가격 내림차순으로 정렬
+            // 정렬하는거 수정 할 것***
+            // 2중 반복문으로 비교중인 요소를 0번 인덱스까지 역으로 비교
             for (int i = 0; i < N; i++)
             {
                 if ( i + 1 >= N ) break;
@@ -51,6 +53,14 @@ namespace _1202
                     jewels[i + 1] = tempjewel;              
                 }
             }
+
+            Console.WriteLine("보석들");
+            for (int i = 0; i < N; i++)
+            {
+                Console.Write($"{jewels[i].weight}, ");
+            }
+            Console.WriteLine();
+
 
             // 다음 K개 줄에는 가방에 담을 수 있는 최대 무게 Ci가 주어진다. (1 ≤ Ci ≤ 100, 000, 000)
             // 가방에 넣을 수 있는 무게 C 입력 (갯수만큼 반복 K)
@@ -77,7 +87,7 @@ namespace _1202
                 // 보석을 가방에 넣을 수 있을 때
                 if (jewels[jewelIndex].weight <= bagWeights[i])
                 {
-                    //Console.WriteLine($"보석 무게 : {jewels[jewelIndex].weight}, 가방 무게 : {bagWeights[i]} -> 담기 성공");
+                    Console.WriteLine($"보석 무게 : {jewels[jewelIndex].weight}, 가방 무게 : {bagWeights[i]} -> 담기 성공");
 
                     price += jewels[jewelIndex].price;
                     jewelIndex++;
@@ -85,7 +95,7 @@ namespace _1202
                 // 보석을 못넣을 때
                 else
                 {
-                    //Console.WriteLine($"보석 무게 : {jewels[jewelIndex].weight}, 가방 무게 : {bagWeights[i]} -> 담기 실패");
+                    Console.WriteLine($"보석 무게 : {jewels[jewelIndex].weight}, 가방 무게 : {bagWeights[i]} -> 담기 실패");
 
                     jewelIndex++;
                     i--;
