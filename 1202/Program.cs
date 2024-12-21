@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using static _1202.Program;
 
 namespace _1202
 {
@@ -15,7 +14,6 @@ namespace _1202
             // 가방 한개에는 하나의 보석만 
             // 훔칠수있는 최대 가격은?
 
-
             // 첫째 줄에 N과 K가 주어진다. (1 ≤ N, K ≤ 300,000)
             // 보석 갯수 N, 가방 갯수 K 입력
             var NK = Array.ConvertAll(Console.ReadLine().Split(), int.Parse);
@@ -23,90 +21,54 @@ namespace _1202
             int K = NK[1];
 
             // 다음 N개 줄에는 각 보석의 정보 Mi와 Vi가 주어진다. (0 ≤ Mi, Vi ≤ 1, 000, 000)
-            // 보석의 무게 M, 가격 V 입력 (갯수 만큼 반복 N)
-            int M = 0;
-            int V = 0;
-            //Jewel[] jewels = new Jewel[N];
-            List<Jewel> jewels = new List<Jewel>();
-
+            // 보석의 무게 M, 가격 V 입력 (갯수 만큼 반복 N) - 보석 정보 입력
+            Jewel[] jewels = new Jewel[N];
             for (int i = 0; i < N; i++)
             {
                 var MV = Array.ConvertAll(Console.ReadLine().Split(), int.Parse);
-                M = MV[0];
-                V = MV[1];
-
-                Jewel jewel = new Jewel(M, V);
-                jewels.Add(jewel);
+                jewels[i] = new Jewel(MV[0], MV[1]);
             }
-
-            //Console.WriteLine("보석들");
-            //for (int i = 0; i < N; i++)
-            //{
-            //    //Console.Write($"{jewels[i].weight}, ");
-            //    int temp = priorityQueue.Dequeue().weight;
-            //    Console.Write($"{temp}, ");
-
-            //}
-            //Console.WriteLine();
-
 
             // 다음 K개 줄에는 가방에 담을 수 있는 최대 무게 Ci가 주어진다. (1 ≤ Ci ≤ 100, 000, 000)
             // 가방에 넣을 수 있는 무게 C 입력 (갯수만큼 반복 K)
-            int C = 0;
             int[] bagWeights = new int[K];
-
             for (int i = 0; i < K; i++)
             {
-                C = int.Parse(Console.ReadLine());
-                bagWeights[i] = C;
+                bagWeights[i] = int.Parse(Console.ReadLine());
             }
 
+            // 보석 무게와, 가방 무게로 오름차순 정렬
+            Array.Sort(jewels, (a, b) => a.weight.CompareTo(b.weight));// 무게 기준 오름차순
             Array.Sort(bagWeights);// 오름차순
 
             // bagWeights의 요소들이 가방 무게인데 보석 무게와 비교하고 가방 무게보다 작으면 해당 보석 가격을 합친다
-            int price = 0;
-            //int jewelIndex = 0;
-
-            PriorityQueue<Jewel, int> priorityQueue = new PriorityQueue<Jewel, int>();
-            Jewel temp;
+            long totalPrice = 0;
+            var maxHeap = new PriorityQueue<int, int>(Comparer<int>.Create((a, b) => b.CompareTo(a)));// 내림차순 정렬
+            int jewelIndex = 0;
 
             for (int i = 0; i < K; i++)
             {
-                // 가장 가벼운 가방에 가장 가벼운 보석이 안들어가면 이 가방에는 아무것도 담을수 없다
-
-                // 가방에 들어갈수 있는 보석을 모두 priorityQueue에 담고
-                // 가장 값어치가 높은것을 찾아 price에 값어치를 더한다
-                // 해당 보석을 리스트에서 삭제한다
-                for (int j = 0; j < jewels.Count; j++)
+                // 가방 무게보다 같거나 작은 모든 보석을 담고 
+                // 그중에 가장 값어치가 높은 보석의 가격을 totalPrice에 더한다
+                while (jewelIndex < N && jewels[jewelIndex].weight <= bagWeights[i])
                 {
-                    if (bagWeights[i] >= jewels[j].weight)
-                    {
-                        priorityQueue.Enqueue(jewels[j], jewels[j].price);
-                    }
+                    maxHeap.Enqueue(jewels[jewelIndex].price, jewels[jewelIndex].price);
+                    jewelIndex++;
                 }
 
-                // priorityQueue에 가장 값어치가 높은것만 남긴다
-                if (priorityQueue.Count > 1)
+                // 가장 비싼 보석 선택
+                // 가장 비싼 보석을 제거한뒤 나머지 보석을 제거할 필요가없다
+                // 다음 주머니는 오름차순으로 정렬했기때문에 보석의 무게보다 무조건 크고
+                // 이중에 가장 값어치가 높은 보석을 찾아야하기 때문이다.
+                if (maxHeap.Count > 0)
                 {
-                    while (priorityQueue.Count > 1)
-                    {
-                        priorityQueue.Dequeue();
-                    }
-
-                    temp = priorityQueue.Dequeue();
-                    price += temp.price;
-                    int index = jewels.IndexOf(temp);
-                    jewels.RemoveAt(index);
-                    priorityQueue.Clear();
+                    totalPrice += maxHeap.Dequeue();
                 }
-
             }
 
-            Console.WriteLine(price);
-
+            Console.WriteLine(totalPrice);
         }
 
-        // class vs struct?
         public class Jewel
         {
             public int weight;
@@ -117,8 +79,6 @@ namespace _1202
                 this.weight = weight;
                 this.price = price;
             }
-        }
-
-       
+        }       
     }
 }
