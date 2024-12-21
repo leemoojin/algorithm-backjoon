@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using static _1202.Program;
 
 namespace _1202
 {
@@ -24,7 +26,8 @@ namespace _1202
             // 보석의 무게 M, 가격 V 입력 (갯수 만큼 반복 N)
             int M = 0;
             int V = 0;
-            Jewel[] jewels = new Jewel[N];
+            //Jewel[] jewels = new Jewel[N];
+            List<Jewel> jewels = new List<Jewel>();
 
             for (int i = 0; i < N; i++)
             {
@@ -33,33 +36,18 @@ namespace _1202
                 V = MV[1];
 
                 Jewel jewel = new Jewel(M, V);
-                jewels[i] = jewel;
+                jewels.Add(jewel);
             }
 
-            Jewel tempjewel;
+            //Console.WriteLine("보석들");
+            //for (int i = 0; i < N; i++)
+            //{
+            //    //Console.Write($"{jewels[i].weight}, ");
+            //    int temp = priorityQueue.Dequeue().weight;
+            //    Console.Write($"{temp}, ");
 
-            // 보석 가격 내림차순으로 정렬
-            // 정렬하는거 수정 할 것***
-            // 2중 반복문으로 비교중인 요소를 0번 인덱스까지 역으로 비교
-            for (int i = 0; i < N; i++)
-            {
-                if ( i + 1 >= N ) break;
-
-                // 다음 보석 가격 더 크변 위치 변경
-                if (jewels[i].price < jewels[i + 1].price)
-                {
-                    tempjewel = jewels[i];
-                    jewels[i] = jewels[i + 1];
-                    jewels[i + 1] = tempjewel;              
-                }
-            }
-
-            Console.WriteLine("보석들");
-            for (int i = 0; i < N; i++)
-            {
-                Console.Write($"{jewels[i].weight}, ");
-            }
-            Console.WriteLine();
+            //}
+            //Console.WriteLine();
 
 
             // 다음 K개 줄에는 가방에 담을 수 있는 최대 무게 Ci가 주어진다. (1 ≤ Ci ≤ 100, 000, 000)
@@ -74,32 +62,44 @@ namespace _1202
             }
 
             Array.Sort(bagWeights);// 오름차순
-            Array.Reverse(bagWeights);// 반전(내림차순)
 
             // bagWeights의 요소들이 가방 무게인데 보석 무게와 비교하고 가방 무게보다 작으면 해당 보석 가격을 합친다
             int price = 0;
-            int jewelIndex = 0;
+            //int jewelIndex = 0;
+
+            PriorityQueue<Jewel, int> priorityQueue = new PriorityQueue<Jewel, int>();
+            Jewel temp;
 
             for (int i = 0; i < K; i++)
             {
-                 if (jewelIndex >= N) break;
+                // 가장 가벼운 가방에 가장 가벼운 보석이 안들어가면 이 가방에는 아무것도 담을수 없다
 
-                // 보석을 가방에 넣을 수 있을 때
-                if (jewels[jewelIndex].weight <= bagWeights[i])
+                // 가방에 들어갈수 있는 보석을 모두 priorityQueue에 담고
+                // 가장 값어치가 높은것을 찾아 price에 값어치를 더한다
+                // 해당 보석을 리스트에서 삭제한다
+                for (int j = 0; j < jewels.Count; j++)
                 {
-                    Console.WriteLine($"보석 무게 : {jewels[jewelIndex].weight}, 가방 무게 : {bagWeights[i]} -> 담기 성공");
-
-                    price += jewels[jewelIndex].price;
-                    jewelIndex++;
+                    if (bagWeights[i] >= jewels[j].weight)
+                    {
+                        priorityQueue.Enqueue(jewels[j], jewels[j].price);
+                    }
                 }
-                // 보석을 못넣을 때
-                else
+
+                // priorityQueue에 가장 값어치가 높은것만 남긴다
+                if (priorityQueue.Count > 1)
                 {
-                    Console.WriteLine($"보석 무게 : {jewels[jewelIndex].weight}, 가방 무게 : {bagWeights[i]} -> 담기 실패");
+                    while (priorityQueue.Count > 1)
+                    {
+                        priorityQueue.Dequeue();
+                    }
 
-                    jewelIndex++;
-                    i--;
+                    temp = priorityQueue.Dequeue();
+                    price += temp.price;
+                    int index = jewels.IndexOf(temp);
+                    jewels.RemoveAt(index);
+                    priorityQueue.Clear();
                 }
+
             }
 
             Console.WriteLine(price);
